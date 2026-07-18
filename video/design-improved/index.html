@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --paper: #fbfaff;
+        --paper-2: #f3efff;
+        --ink: #171421;
+        --sub: #655f76;
+        --muted: #928aa6;
+        --violet: #7c3aed;
+        --violet-2: #a78bfa;
+        --lav: #ddd6fe;
+        --line: #d9d2f2;
+        --white: #ffffff;
+        --green: #22c55e;
+        --amber: #f59e0b;
+        --red: #ef4444;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--paper); color: var(--ink); font-family: "Noto Sans KR", Inter, -apple-system, BlinkMacSystemFont, sans-serif; }
+      #root { position: relative; width: 1920px; height: 1080px; overflow: hidden; isolation: isolate; background: var(--paper) url("assets/generated/design-improved-orbit-bg.svg") center/cover no-repeat; }
+      .clip.scene { position: absolute; inset: 0; overflow: hidden; z-index: 2; }
+      .scene::before { content:""; position:absolute; inset:0; background: linear-gradient(180deg, rgba(255,255,255,.2), rgba(255,255,255,.62)); pointer-events:none; }
+      .scene-content { position: relative; z-index: 2; width: 100%; height: 100%; padding: 78px 104px 76px; display: flex; flex-direction: column; }
+      .brand { position: absolute; top: 58px; left: 84px; z-index: 5; display: flex; align-items: center; gap: 12px; font-size: 28px; font-weight: 900; color: var(--ink); letter-spacing: -0.04em; }
+      .brand::before { content:""; width: 34px; height: 34px; border-radius: 12px; background: linear-gradient(135deg, var(--violet), var(--violet-2)); box-shadow: 0 12px 34px rgba(124,58,237,.28); }
+      .eyebrow { color: var(--violet); font-size: 22px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+      .headline { font-size: 76px; line-height: 1.12; letter-spacing: -0.075em; font-weight: 950; color: var(--ink); }
+      .copy { font-size: 29px; line-height: 1.48; letter-spacing: -0.04em; font-weight: 620; color: var(--sub); }
+      .glass { background: rgba(255,255,255,.68); border: 1px solid rgba(184,169,255,.42); box-shadow: 0 30px 90px rgba(57,38,119,.13); backdrop-filter: blur(18px); }
+      .pill { display: inline-flex; align-items: center; justify-content: center; padding: 13px 20px; border-radius: 999px; background: rgba(255,255,255,.7); border: 1px solid rgba(167,139,250,.34); color: var(--violet); font-size: 20px; font-weight: 850; letter-spacing: -0.03em; }
+      .split { display: grid; grid-template-columns: .9fr 1.1fr; gap: 76px; align-items: center; height: 100%; }
+      .mock { border-radius: 36px; background: rgba(255,255,255,.74); border: 1px solid rgba(184,169,255,.42); box-shadow: 0 36px 120px rgba(57,38,119,.14); overflow: hidden; }
+      .mockbar { height: 74px; display: flex; align-items: center; gap: 12px; padding: 0 28px; border-bottom: 1px solid rgba(217,210,242,.8); background: rgba(255,255,255,.56); }
+      .dot { width: 13px; height: 13px; border-radius: 50%; background: var(--lav); }
+      .dot:nth-child(1){ background:#fda4af; } .dot:nth-child(2){ background:#fcd34d; } .dot:nth-child(3){ background:#86efac; }
+      svg { overflow: visible; }
+
+      .s01 .scene-content { align-items: center; justify-content: center; text-align: center; }
+      .hero-title { font-size: 96px; line-height: 1.06; letter-spacing: -0.085em; font-weight: 950; color: var(--ink); text-shadow: 0 16px 46px rgba(255,255,255,.72); }
+      .hero-title strong { color: var(--violet); }
+      .hero-sub { margin-top: 34px; font-size: 38px; font-weight: 850; color: #6d55d8; letter-spacing: -0.04em; }
+      .float-card { position: absolute; z-index: 1; width: 170px; height: 104px; border-radius: 26px; padding: 18px; transform: rotate(var(--r)); }
+      .float-card b { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 13px; color: #fff; background: var(--violet); font-size: 18px; }
+      .float-card span { display: block; margin-top: 10px; font-size: 20px; font-weight: 880; letter-spacing: -0.05em; }
+      .fc1{left:175px;top:190px;--r:-7deg}.fc2{right:230px;top:175px;--r:6deg}.fc3{left:300px;bottom:180px;--r:5deg}.fc4{right:310px;bottom:190px;--r:-8deg}.fc5{left:720px;top:135px;--r:4deg}.fc6{right:730px;bottom:120px;--r:-3deg}
+      .orbit-line { position:absolute; inset:0; z-index:0; opacity:.42; }
+      .orbit-line path { fill:none; stroke: var(--violet); stroke-width:2; stroke-dasharray: 12 18; }
+
+      .s02 .scene-content { justify-content: center; }
+      .question-board { width: 960px; height: 620px; margin-left: auto; position: relative; border-radius: 44px; }
+      .person { position: absolute; left: 78px; bottom: 76px; width: 300px; height: 390px; }
+      .head { position:absolute; left:93px; top:0; width:116px; height:116px; border-radius:50%; background:#ffd9c8; box-shadow: inset 0 -12px rgba(0,0,0,.05); }
+      .hair { position:absolute; left:70px; top:-12px; width:160px; height:120px; border-radius:60% 60% 42% 42%; background:#3a315c; }
+      .body { position:absolute; left:42px; top:128px; width:220px; height:230px; border-radius:80px 80px 34px 34px; background:linear-gradient(135deg,var(--violet),#b79cff); }
+      .bubble { position:absolute; min-width:350px; padding:24px 30px; border-radius:28px; font-size:29px; font-weight:860; letter-spacing:-.05em; color:var(--ink); }
+      .b1{right:76px;top:92px}.b2{right:155px;top:265px}.b3{right:58px;bottom:92px}
+
+      .s03 .scene-content { justify-content: center; gap: 58px; }
+      .quote-row { display:grid; grid-template-columns: repeat(3,1fr); gap:28px; }
+      .quote-card { min-height:360px; border-radius:34px; padding:36px; }
+      .quote-card h3 { font-size:34px; color:var(--violet); font-weight:950; }
+      .quote-card p { margin-top:28px; font-size:29px; line-height:1.44; font-weight:820; letter-spacing:-.05em; }
+      .quote-card small { display:block; margin-top:24px; color:var(--muted); font-size:20px; font-weight:750; }
+
+      .s04 { background: #171421; }
+      .s04::before { background: radial-gradient(circle at 50% 48%, rgba(124,58,237,.32), transparent 36%), #171421; }
+      .s04 .scene-content { align-items:center; justify-content:center; color:#fff; text-align:center; }
+      .dark-title { font-size:86px; line-height:1.12; letter-spacing:-.08em; font-weight:950; color:#fff; }
+      .dark-title em { color:#c4b5fd; font-style:normal; }
+      .scatter { position:absolute; width:118px; height:78px; border-radius:20px; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18); }
+      .sc1{left:230px;top:210px}.sc2{right:240px;top:220px}.sc3{left:360px;bottom:170px}.sc4{right:360px;bottom:190px}
+
+      .s05 .scene-content { align-items:center; justify-content:center; text-align:center; }
+      .logo-lock { display:grid; place-items:center; width:210px; height:210px; border-radius:60px; background:linear-gradient(135deg,var(--violet),#c4b5fd); color:#fff; font-size:96px; font-weight:950; box-shadow:0 46px 120px rgba(124,58,237,.32); }
+      .solution-title { margin-top:42px; font-size:84px; font-weight:950; letter-spacing:-.08em; }
+      .solution-copy { margin-top:22px; font-size:34px; color:var(--sub); font-weight:760; letter-spacing:-.04em; }
+
+      .graph-panel { position:relative; height:640px; border-radius:42px; }
+      .graph-panel svg { position:absolute; inset:0; width:100%; height:100%; }
+      .edge { stroke:#b8a9ff; stroke-width:4; fill:none; stroke-linecap:round; }
+      .node { position:absolute; display:grid; place-items:center; width:158px; height:82px; border-radius:24px; background:#fff; border:1px solid rgba(167,139,250,.48); color:var(--ink); font-size:22px; font-weight:900; box-shadow:0 18px 54px rgba(57,38,119,.12); text-align:center; letter-spacing:-.05em; }
+      .n0{left:410px;top:255px;background:linear-gradient(135deg,var(--violet),#a78bfa);color:#fff}.n1{left:160px;top:120px}.n2{right:170px;top:120px}.n3{left:128px;bottom:128px}.n4{right:150px;bottom:124px}.n5{left:520px;bottom:70px}
+      .rel { position:absolute; padding:8px 13px; border-radius:999px; background:rgba(255,255,255,.82); color:var(--violet); border:1px solid rgba(167,139,250,.34); font-size:17px; font-weight:860; }
+      .r1{left:315px;top:185px}.r2{right:325px;top:188px}.r3{left:285px;bottom:230px}.r4{right:310px;bottom:226px}
+
+      .upload-zone { height:640px; border-radius:42px; display:grid; place-items:center; text-align:center; }
+      .upload-icon { width:170px; height:170px; border-radius:50px; background:linear-gradient(135deg,#fff,var(--paper-2)); display:grid; place-items:center; box-shadow:0 28px 80px rgba(57,38,119,.13); }
+      .upload-icon::before { content:"↑"; color:var(--violet); font-size:84px; font-weight:900; }
+      .tag-row { margin-top:30px; display:flex; gap:14px; justify-content:center; }
+
+      .review-list { padding:34px; height:640px; display:flex; flex-direction:column; gap:18px; }
+      .review-row { display:grid; grid-template-columns:56px 1fr 130px 130px; align-items:center; gap:16px; padding:22px; border-radius:24px; background:#fff; border:1px solid rgba(217,210,242,.8); }
+      .check { width:44px; height:44px; border-radius:15px; border:2px solid var(--line); display:grid; place-items:center; color:transparent; font-weight:950; }
+      .review-main b { font-size:24px; letter-spacing:-.04em; } .review-main span { display:block; margin-top:5px; color:var(--muted); font-size:17px; font-weight:700; }
+      .btn { text-align:center; padding:13px 16px; border-radius:15px; font-size:18px; font-weight:900; border:1px solid var(--line); }
+      .approve { color:#15803d; background:#ecfdf5; } .reject { color:#b91c1c; background:#fff1f2; }
+
+      .knowledge-wrap { position:relative; height:660px; border-radius:44px; }
+      .side-panel { position:absolute; right:28px; top:28px; bottom:28px; width:460px; border-radius:34px; padding:34px; background:rgba(255,255,255,.86); border:1px solid rgba(184,169,255,.44); box-shadow:0 30px 90px rgba(57,38,119,.14); }
+      .side-panel h3 { font-size:32px; letter-spacing:-.06em; }
+      .evidence { margin-top:24px; padding:20px; border-radius:22px; background:#f7f4ff; color:var(--sub); font-size:20px; line-height:1.45; font-weight:760; letter-spacing:-.04em; }
+      .kg-node { position:absolute; width:145px; height:70px; border-radius:22px; background:#fff; border:1px solid rgba(167,139,250,.46); display:grid; place-items:center; font-size:20px; font-weight:880; box-shadow:0 16px 46px rgba(57,38,119,.1); }
+      .k0{left:365px;top:270px;background:var(--violet);color:#fff}.k1{left:145px;top:115px}.k2{left:640px;top:110px}.k3{left:120px;bottom:130px}.k4{left:640px;bottom:120px}
+
+      .report { height:660px; display:grid; grid-template-columns:280px 1fr; border-radius:42px; overflow:hidden; }
+      .nav { padding:34px; background:#201739; color:#ddd6fe; display:flex; flex-direction:column; gap:18px; font-size:22px; font-weight:820; }
+      .nav span.active { color:#fff; background:rgba(255,255,255,.12); padding:14px 18px; border-radius:16px; margin-left:-18px; }
+      .report-body { padding:34px; background:rgba(255,255,255,.78); }
+      .metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:26px; }
+      .metric { border-radius:26px; padding:26px; background:#fff; border:1px solid rgba(217,210,242,.75); }
+      .metric b { font-size:48px; color:var(--violet); } .metric span { display:block; margin-top:8px; color:var(--sub); font-size:20px; font-weight:760; }
+      .bar { margin-top:18px; height:14px; border-radius:999px; background:#eee8ff; overflow:hidden; } .bar i { display:block; height:100%; width:var(--w); background:linear-gradient(90deg,var(--violet),var(--violet-2)); border-radius:inherit; }
+
+      .roadmap { position:relative; display:grid; grid-template-columns:repeat(4,1fr); gap:22px; margin-top:68px; }
+      .roadmap::before { content:""; position:absolute; top:64px; left:9%; right:9%; height:4px; border-radius:999px; background:linear-gradient(90deg,var(--violet),var(--violet-2)); transform-origin:left; }
+      .road-card { position:relative; min-height:310px; border-radius:32px; padding:28px; }
+      .road-num { display:grid; place-items:center; width:72px; height:72px; border-radius:24px; background:linear-gradient(135deg,var(--violet),var(--violet-2)); color:#fff; font-size:26px; font-weight:950; }
+      .road-card h3 { margin-top:34px; font-size:30px; line-height:1.18; letter-spacing:-.06em; } .road-card p { margin-top:14px; font-size:19px; line-height:1.45; color:var(--sub); font-weight:720; letter-spacing:-.035em; }
+
+
+      .s08 .headline { font-size: 68px; }
+      .s11 .brand { display: none; }
+      .s11 .headline { font-size: 68px; }
+      .s12 .scene-content { align-items:center; justify-content:center; text-align:center; }
+      .final-logo { font-size:116px; font-weight:950; letter-spacing:-.08em; color:var(--ink); }
+      .final-logo span { color:var(--violet); }
+      .final-copy { margin-top:28px; font-size:48px; font-weight:900; letter-spacing:-.055em; color:#4a3e76; }
+      .final-url { margin-top:34px; color:var(--violet); font-size:28px; font-weight:820; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="design-improved" data-start="0" data-duration="60" data-width="1920" data-height="1080">
+      <audio id="bgm" class="clip" src="assets/audio/stology_bgm_60s.wav" data-start="0" data-duration="58.93" data-track-index="2"></audio>
+
+      <section id="s01" class="clip scene s01" data-start="0" data-duration="4" data-track-index="1">
+        <svg class="orbit-line" viewBox="0 0 1920 1080" data-layout-ignore=""><path d="M260 240 C520 390 690 450 960 540 C1210 620 1430 690 1690 815"/><path d="M180 820 C540 650 720 710 920 800 C1120 890 1300 790 1580 520"/></svg>
+        <div class="float-card glass fc1"><b>N</b><span>노트</span></div><div class="float-card glass fc2"><b>D</b><span>자료</span></div><div class="float-card glass fc3"><b>Q</b><span>질문</span></div><div class="float-card glass fc4"><b>R</b><span>회고</span></div><div class="float-card glass fc5"><b>S</b><span>요약</span></div><div class="float-card glass fc6"><b>C</b><span>개념</span></div>
+        <div class="scene-content"><div class="pill">Study + Ontology</div><h1 class="hero-title">흩어지는 스터디 자료를,<br><strong>연결된 지식 자산</strong>으로</h1><div class="hero-sub">Stology</div></div>
+      </section>
+
+      <section id="s02" class="clip scene s02" data-start="4" data-duration="4" data-track-index="1"><div class="brand">Stology</div><div class="scene-content split"><div><div class="eyebrow">Problem</div><h2 class="headline">매주 쌓이지만,<br>다시 찾기 어렵습니다</h2><p class="copy" style="margin-top:28px">질문과 자료, 학습 흐름이 흩어지면 다음 스터디의 출발점도 매번 흐려집니다.</p></div><div class="question-board glass"><div class="person"><div class="hair"></div><div class="head"></div><div class="body"></div></div><div class="bubble glass b1">이번 주에 뭘 배웠지?</div><div class="bubble glass b2">그 자료 어디 있었지?</div><div class="bubble glass b3">다음엔 무엇을 공부하지?</div></div></div></section>
+
+      <section id="s03" class="clip scene s03" data-start="8" data-duration="5" data-track-index="1"><div class="brand">Stology</div><div class="scene-content"><h2 class="headline">3기수 동안,<br>같은 질문이 반복됐습니다</h2><div class="quote-row"><div class="quote-card glass"><h3>8기</h3><p>“내가 앞으로 무엇을 배워야 하지?”<br>“JPA와 Spring Data JPA는 뭐가 다르지?”</p><small>Spring Boot 주니어</small></div><div class="quote-card glass"><h3>9기</h3><p>“지난 기수 때 정리한 자료가 어디 있지?”<br>“추가로 공부할 개념은 무엇이지?”</p><small>Spring Boot 시니어</small></div><div class="quote-card glass"><h3>10기</h3><p>“스터디원들이 어디까지 이해했지?”<br>“이번 주에 놓친 개념은 무엇이지?”</p><small>Spring Boot 파트장</small></div></div></div></section>
+
+      <section id="s04" class="clip scene s04" data-start="13" data-duration="4" data-track-index="1"><div class="scatter sc1"></div><div class="scatter sc2"></div><div class="scatter sc3"></div><div class="scatter sc4"></div><div class="scene-content"><h2 class="dark-title">자료는 있는데,<br><em>연결</em>이 없습니다</h2></div></section>
+
+      <section id="s05" class="clip scene s05" data-start="17" data-duration="5" data-track-index="1"><div class="scene-content"><div class="logo-lock">S</div><h2 class="solution-title">Stology</h2><p class="solution-copy">Study 흐름을 Ontology 구조로 정리하는 스터디 운영 도구</p></div></section>
+
+      <section id="s06" class="clip scene s06" data-start="22" data-duration="5" data-track-index="1"><div class="brand">Stology</div><div class="scene-content split"><div><div class="eyebrow">Ontology</div><h2 class="headline">개념을<br>온톨로지로 읽습니다</h2><p class="copy" style="margin-top:28px">개념의 선후관계, 맥락, 심화 흐름을 하나의 지식 구조로 보여줍니다.</p></div><div class="graph-panel glass"><svg viewBox="0 0 900 640"><path class="edge" d="M490 296 L255 158 M520 296 L720 158 M490 340 L225 496 M540 340 L725 500 M515 360 L610 572"/></svg><div class="node n0">Spring</div><div class="node n1">Java</div><div class="node n2">DI</div><div class="node n3">Servlet</div><div class="node n4">Spring Boot</div><div class="node n5">REST API</div><div class="rel r1">기반 개념</div><div class="rel r2">맥락 개념</div><div class="rel r3">대조 개념</div><div class="rel r4">심화 개념</div></div></div></section>
+
+      <section id="s07" class="clip scene s07" data-start="27" data-duration="5" data-track-index="1"><div class="brand">Stology</div><div class="scene-content split"><div><div class="eyebrow">01 Upload</div><h2 class="headline">자료를 올리면<br>주차와 개념을 제안합니다</h2><p class="copy" style="margin-top:28px">업로드한 학습자료에서 핵심 개념과 근거 문장을 후보로 추출합니다.</p></div><div class="upload-zone glass"><div><div class="upload-icon"></div><h3 style="margin-top:28px;font-size:34px;letter-spacing:-.05em">자료 업로드 완료</h3><div class="tag-row"><span class="pill">5주차 자동 분류</span><span class="pill">개념 후보 12개</span></div></div></div></div></section>
+
+      <section id="s08" class="clip scene s08" data-start="32" data-duration="6" data-track-index="1"><div class="brand">Stology</div><div class="scene-content split"><div><div class="eyebrow">02 Review</div><h2 class="headline">분석 결과는<br>팀원의 승인을 통해<br>반영됩니다</h2><p class="copy" style="margin-top:28px">후보 개념은 승인과 반려 과정을 거쳐 신뢰도 있는 지식 구조로 누적됩니다.</p></div><div class="review-list glass"><div class="review-row"><div class="check">✓</div><div class="review-main"><b>IoC 컨테이너</b><span>근거 문장 3개 · 신뢰도 높음</span></div><div class="btn approve">승인</div><div class="btn reject">반려</div></div><div class="review-row"><div class="check">✓</div><div class="review-main"><b>의존성 주입</b><span>근거 문장 5개 · 관계 후보 있음</span></div><div class="btn approve">승인</div><div class="btn reject">반려</div></div><div class="review-row"><div class="check">✓</div><div class="review-main"><b>Bean 생명주기</b><span>근거 문장 2개 · 보완 필요</span></div><div class="btn approve">승인</div><div class="btn reject">반려</div></div><div class="review-row"><div class="check">✓</div><div class="review-main"><b>AOP</b><span>근거 문장 4개 · 심화 개념</span></div><div class="btn approve">승인</div><div class="btn reject">반려</div></div></div></div></section>
+
+      <section id="s09" class="clip scene s09" data-start="38" data-duration="6" data-track-index="1"><div class="brand">Stology</div><div class="scene-content split"><div><div class="eyebrow">03 Knowledge Map</div><h2 class="headline">승인된 개념은<br>지식 지도로 누적됩니다</h2><p class="copy" style="margin-top:28px">근거 문장과 연결 관계를 함께 확인해 학습 흐름을 빠르게 파악합니다.</p></div><div class="knowledge-wrap glass"><svg viewBox="0 0 1120 660"><path class="edge" d="M440 305 L220 150 M465 305 L715 145 M445 348 L200 498 M472 348 L720 500"/></svg><div class="kg-node k0">Spring</div><div class="kg-node k1">Java</div><div class="kg-node k2">DI</div><div class="kg-node k3">Servlet</div><div class="kg-node k4">Boot</div><div class="side-panel"><span class="pill">Evidence</span><h3 style="margin-top:18px">의존성 주입</h3><div class="evidence">객체가 직접 의존 객체를 만들지 않고 외부에서 주입받는 방식입니다.</div><div class="evidence">관련 개념: IoC 컨테이너, Bean, 테스트 용이성</div></div></div></div></section>
+
+      <section id="s10" class="clip scene s10" data-start="44" data-duration="5" data-track-index="1"><div class="brand">Stology</div><div class="scene-content"><div class="eyebrow">04 Weekly Report</div><h2 class="headline">주차별 리포트가<br>다음 학습 방향을 보여줍니다</h2><div class="report glass" style="margin-top:44px"><div class="nav"><span>홈</span><span>스터디</span><span>질문함</span><span class="active">리포트</span><span>지식 지도</span></div><div class="report-body"><h3 style="font-size:38px;letter-spacing:-.06em">5주차 커버리지 리포트</h3><div class="metrics"><div class="metric"><b>82%</b><span>핵심 개념 커버리지</span><div class="bar"><i style="--w:82%"></i></div></div><div class="metric"><b>12</b><span>새 개념 후보</span><div class="bar"><i style="--w:64%"></i></div></div><div class="metric"><b>4</b><span>보완 필요 영역</span><div class="bar"><i style="--w:42%"></i></div></div></div></div></div></div></section>
+
+      <section id="s11" class="clip scene s11" data-start="49" data-duration="6" data-track-index="1"><div class="brand">Stology</div><div class="scene-content"><div class="eyebrow">MVP Reminder</div><h2 class="headline">MVP는 자료가<br>운영 근거로 바뀌는 흐름을 검증합니다</h2><div class="roadmap"><div class="road-card glass"><div class="road-num">01</div><h3>서비스 온톨로지 제공</h3><p>학습할 개념과 관계를 직관적으로 파악합니다.</p></div><div class="road-card glass"><div class="road-num">02</div><h3>자료 업로드와 AI 추출</h3><p>핵심 개념과 근거 문장을 후보로 제안합니다.</p></div><div class="road-card glass"><div class="road-num">03</div><h3>팀 검토와 지식 지도</h3><p>승인된 후보만 지식 구조에 누적합니다.</p></div><div class="road-card glass"><div class="road-num">04</div><h3>AI 커버리지 리포트</h3><p>주차별 활동 기록으로 다음 방향을 제안합니다.</p></div></div></div></section>
+
+      <section id="s12" class="clip scene s12" data-start="55" data-duration="5" data-track-index="1"><div class="scene-content"><div class="final-logo">Sto<span>logy</span></div><div class="final-copy">당신의 활동이<br>소중한 자산이 되도록</div><div class="final-url">Study + Ontology</div></div></section>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true, defaults: { ease: "power2.out" } });
+      gsap.set(".edge", { strokeDasharray: 900, strokeDashoffset: 900 });
+      gsap.set(".check", { backgroundColor: "#ffffff", borderColor: "#d9d2f2", color: "transparent" });
+
+      tl.from("#s01 .pill", { opacity:0, y:24, duration:.45 }, .2)
+        .from("#s01 .hero-title", { opacity:0, y:42, scale:.98, duration:.72, ease:"power3.out" }, .46)
+        .from("#s01 .hero-sub", { opacity:0, y:24, duration:.45 }, 1.08)
+        .from("#s01 .float-card", { opacity:0, y:32, scale:.88, stagger:.08, duration:.5 }, .35)
+        .to("#s01", { opacity:0, duration:.35 }, 3.72);
+
+      tl.from("#s02 .eyebrow, #s02 .headline, #s02 .copy", { opacity:0, y:28, stagger:.12, duration:.44 }, 4.2)
+        .from("#s02 .question-board", { opacity:0, x:50, scale:.98, duration:.6 }, 4.28)
+        .from("#s02 .person", { opacity:0, y:34, duration:.52 }, 4.68)
+        .from("#s02 .bubble", { opacity:0, x:30, stagger:.18, duration:.42 }, 5.04)
+        .to("#s02", { opacity:0, duration:.35 }, 7.68);
+
+      tl.from("#s03 .headline", { opacity:0, y:30, duration:.55 }, 8.16)
+        .from("#s03 .quote-card", { opacity:0, y:46, stagger:.16, duration:.55 }, 8.82)
+        .to("#s03", { opacity:0, duration:.35 }, 12.62);
+
+      tl.from("#s04 .scatter", { opacity:0, y:-34, rotation:-8, stagger:.08, duration:.46 }, 13.16)
+        .from("#s04 .dark-title", { opacity:0, y:36, scale:.98, duration:.72, ease:"power3.out" }, 13.52)
+        .to("#s04 .scatter", { opacity:.25, x:20, stagger:.05, duration:.55 }, 15.4)
+        .to("#s04", { opacity:0, duration:.35 }, 16.7);
+
+      tl.from("#s05 .logo-lock", { opacity:0, y:40, scale:.86, duration:.7, ease:"back.out(1.5)" }, 17.16)
+        .from("#s05 .solution-title", { opacity:0, y:28, duration:.48 }, 17.82)
+        .from("#s05 .solution-copy", { opacity:0, y:22, duration:.44 }, 18.22)
+        .to("#s05", { opacity:0, duration:.35 }, 21.62);
+
+      tl.from("#s06 .eyebrow, #s06 .headline, #s06 .copy", { opacity:0, y:28, stagger:.12, duration:.42 }, 22.15)
+        .from("#s06 .graph-panel", { opacity:0, x:46, scale:.985, duration:.58 }, 22.22)
+        .to("#s06 .edge", { strokeDashoffset:0, duration:1.05, stagger:.06 }, 22.8)
+        .from("#s06 .node", { opacity:0, scale:.78, stagger:.08, duration:.42, ease:"back.out(1.4)" }, 23.1)
+        .from("#s06 .rel", { opacity:0, y:12, stagger:.08, duration:.32 }, 23.72)
+        .to("#s06", { opacity:0, duration:.35 }, 26.62);
+
+      tl.from("#s07 .eyebrow, #s07 .headline, #s07 .copy", { opacity:0, y:28, stagger:.12, duration:.42 }, 27.16)
+        .from("#s07 .upload-zone", { opacity:0, x:44, duration:.55 }, 27.22)
+        .from("#s07 .upload-icon", { opacity:0, y:-24, scale:.82, duration:.62, ease:"back.out(1.5)" }, 27.9)
+        .from("#s07 .pill", { opacity:0, y:16, stagger:.1, duration:.32 }, 28.72)
+        .to("#s07", { opacity:0, duration:.35 }, 31.62);
+
+      tl.from("#s08 .eyebrow, #s08 .headline, #s08 .copy", { opacity:0, y:28, stagger:.12, duration:.42 }, 32.16)
+        .from("#s08 .review-list", { opacity:0, x:46, duration:.55 }, 32.24)
+        .from("#s08 .review-row", { opacity:0, y:26, stagger:.13, duration:.38 }, 32.88)
+        .to("#s08 .check", { backgroundColor:"#7c3aed", borderColor:"#7c3aed", color:"#ffffff", scale:1.06, stagger:.22, duration:.26 }, 34.1)
+        .to("#s08 .check", { scale:1, stagger:.22, duration:.2 }, 34.34)
+        .to("#s08", { opacity:0, duration:.35 }, 37.62);
+
+      tl.from("#s09 .eyebrow, #s09 .headline, #s09 .copy", { opacity:0, y:28, stagger:.12, duration:.42 }, 38.16)
+        .from("#s09 .knowledge-wrap", { opacity:0, x:46, duration:.55 }, 38.22)
+        .to("#s09 .edge", { strokeDashoffset:0, duration:.9 }, 38.72)
+        .from("#s09 .kg-node", { opacity:0, scale:.82, stagger:.08, duration:.4, ease:"back.out(1.4)" }, 39.0)
+        .from("#s09 .side-panel", { opacity:0, x:34, duration:.45 }, 39.58)
+        .to("#s09", { opacity:0, duration:.35 }, 43.62);
+
+      tl.from("#s10 .eyebrow, #s10 .headline", { opacity:0, y:28, stagger:.12, duration:.44 }, 44.16)
+        .from("#s10 .report", { opacity:0, y:36, scale:.985, duration:.58 }, 44.68)
+        .from("#s10 .metric", { opacity:0, y:24, stagger:.1, duration:.38 }, 45.18)
+        .from("#s10 .bar i", { scaleX:0, transformOrigin:"left center", stagger:.12, duration:.58 }, 45.72)
+        .to("#s10", { opacity:0, duration:.35 }, 48.62);
+
+      tl.from("#s11 .eyebrow, #s11 .headline", { opacity:0, y:28, stagger:.12, duration:.48 }, 49.16)
+        .from("#s11 .road-card", { opacity:0, y:42, stagger:.22, duration:.5 }, 50.0)
+        .to("#s11", { opacity:0, duration:.35 }, 54.62);
+
+      tl.from("#s12 .final-logo", { opacity:0, scale:.92, y:26, duration:.75, ease:"power3.out" }, 55.35)
+        .from("#s12 .final-copy", { opacity:0, y:28, duration:.62 }, 56.15)
+        .from("#s12 .final-url", { opacity:0, y:20, duration:.44 }, 56.9)
+        .to("#s12", { opacity:.98, duration:1.0 }, 58.8);
+      window.__timelines["design-improved"] = tl;
+    </script>
+  </body>
+</html>

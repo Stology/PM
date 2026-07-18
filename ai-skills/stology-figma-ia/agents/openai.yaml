@@ -1,0 +1,4 @@
+interface:
+  display_name: "Stology Figma IA"
+  short_description: "Build clean Stology IA pages in Figma."
+  default_prompt: "Create or revise a Stology IA page in Figma using depth-based structure, aligned connectors, and screenshot verification."

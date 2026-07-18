@@ -1,0 +1,23 @@
+.codex/*
+!.codex/agents/
+!.codex/agents/**
+!.codex/skills/
+!.codex/skills/**
+.codex/skills/.system/**
+!.codex/prompts/
+!.codex/prompts/**
+
+.DS_Store
+**/.DS_Store
+
+/tolaria
+.env.local
+.env.*.local
+
+# Local agent/runtime state
+/.gjc/
+/.superpowers/
+/.omx/
+
+# Local render outputs
+/video/renders/

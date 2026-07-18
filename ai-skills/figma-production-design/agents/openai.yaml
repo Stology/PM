@@ -1,0 +1,4 @@
+interface:
+  display_name: "Figma Production Design"
+  short_description: "Build Figma design systems and production-ready app screens."
+  default_prompt: "Create a production-ready Figma design system and app screens, using external-content placeholders where real integrations or real media should appear."
