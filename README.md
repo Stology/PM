@@ -17,11 +17,7 @@ https://github.com/user-attachments/assets/73e7bd31-2795-41a6-b85d-555c3e2563cb
 | Notion MCP | 기획 자료 정리, 산출물 관리, 프로젝트 문서화 보조 |
 | AI 기반 문서/기획 보조 | MVP 범위 정리, 화면 흐름 점검, 용어와 산출물 일관성 검토 |
 
-* https://github.com/Yeachan-Heo/oh-my-codex
-* https://github.com/heygen-com/hyperframes
-
 ## 산출물
-* WebGL2 소개 사이트: `intro-webgl/`
 * 피그마 : https://www.figma.com/design/SSCK0wKWEc943emer8VNnJ/Stology_PM_Wireframe?node-id=0-1&p=f&t=bFdkXIwKaHEoKQ0L-0
 * 노션 : https://www.notion.so/makeus-challenge/10th-UMC-Xenon-IDEAS-33cb57f4596b80f8849bc89e5a1db163?p=35bb57f4596b80f2a4b7d4bb1a89d077&pm=c
 
